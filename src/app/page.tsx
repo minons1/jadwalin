@@ -1,95 +1,121 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client'
+import { ActionIcon, Button, Combobox, Container, Flex, Grid, Input, Text, TextInput, Title, rem, useCombobox } from "@mantine/core";
+import { DatePicker, DatePickerInput, DateTimePicker, DatesRangeValue, TimeInput } from "@mantine/dates";
+import '@mantine/dates/styles.css';
+import { useForm } from "@mantine/form";
+import { IconArrowsSplit, IconClock } from "@tabler/icons-react";
+import { useState } from "react";
+import { timeOptions } from "../util/time";
+
+type Form = {
+  title: string,
+  startDate: Date,
+  endDate: Date,
+  startTime: string,
+  endTime: string 
+}
 
 export default function Home() {
+  const [value, setValue] = useState<DatesRangeValue | undefined>([new Date(), new Date()]);
+  const form = useForm<Form>({
+    initialValues: {
+      title: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      startTime: '09:00',
+      endTime: '17:00'
+    }
+  })
+
+  const timeOption = timeOptions().map(item => (
+    <Combobox.Option value={item} key={item}>
+      {item}
+    </Combobox.Option>
+  ))
+
+  const comboboxStartTime = useCombobox()
+  const comboboxEndTime = useCombobox()
+
+  const onDateChange = (dates: DatesRangeValue) => {
+    setValue(dates)
+    if (dates[0])
+    form.setFieldValue('startDate', dates[0])
+    if (dates[1])
+    form.setFieldValue('endDate', dates[1])
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Container size="sm" mt='md'>
+      <form>
+        <Flex justify="center" direction='column' align='center' gap='sm'>
+          <Title order={2}>Easily schedule events with <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
+          <TextInput
+            size='lg'
+            mt='md'
+            placeholder="Event Name"
+            w='50%'
+            {...form.getInputProps('title')}
+          />
+        </Flex>
+        <Grid mt='md' align="center">
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Flex justify='center' direction='column' align='center'>
+              <Text c='dimmed' size="xs">Date of the event</Text>
+              <DatePicker
+                type='range'
+                value={value}
+                onChange={setValue}
+                allowSingleDateInRange
+              />
+            </Flex>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Flex justify='center' direction='column' align='center'>
+              <Combobox
+                store={comboboxStartTime}
+                onOptionSubmit={(value) => form.setFieldValue('startTime', value)}
+              >
+                <Combobox.Target>
+                  <TimeInput
+                    description="Not early than"
+                    w='50%'
+                    rightSection={<Combobox.Chevron />}
+                    onClick={() => comboboxStartTime.toggleDropdown()}
+                    leftSection={<IconClock size={18} />}
+                    {...form.getInputProps('startTime')}
+                  />
+                </Combobox.Target>
+                <Combobox.Dropdown>
+                  <Combobox.Options>{timeOption}</Combobox.Options>
+                </Combobox.Dropdown>
+              </Combobox>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+              <Combobox
+                store={comboboxEndTime}
+                onOptionSubmit={(value) => form.setFieldValue('endTime', value)}
+              >
+                <Combobox.Target>
+                  <TimeInput
+                    description="Not later than"
+                    mt='md'
+                    w='50%'
+                    onClick={() => comboboxEndTime.toggleDropdown()}
+                    rightSection={<Combobox.Chevron />}
+                    leftSection={<IconClock size={18} />}
+                    {...form.getInputProps('endTime')}
+                  />
+                </Combobox.Target>
+                <Combobox.Dropdown>
+                  <Combobox.Options>{timeOption}</Combobox.Options>
+                </Combobox.Dropdown>
+              </Combobox>
+              
+              
+            </Flex>
+            
+          </Grid.Col>
+        </Grid>
+      </form>
+    </Container>
   )
 }
