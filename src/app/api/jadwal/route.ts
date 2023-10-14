@@ -2,7 +2,6 @@ import { jadwal } from "@prisma/client"
 import { Prisma } from "../../../lib/prisma"
 import { ulid } from "ulid"
 import { NextRequest } from "next/server"
-import { notFound } from "next/navigation"
 import haha from "../../../lib/jokes"
 
 type CreateBody = { 

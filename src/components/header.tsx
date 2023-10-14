@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { Container, Group, Burger, Text, Title, ThemeIcon } from '@mantine/core';
+import { Container, Group, Burger, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './header.module.css';
 import { IconCalendar } from '@tabler/icons-react';
