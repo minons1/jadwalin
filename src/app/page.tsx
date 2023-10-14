@@ -1,5 +1,5 @@
 'use client'
-import { ActionIcon, Button, Combobox, Container, Flex, Grid, Input, Text, TextInput, Title, rem, useCombobox } from "@mantine/core";
+import { ActionIcon, Button, Combobox, Container, Flex, Grid, Group, Input, Paper, Text, TextInput, Title, rem, useCombobox } from "@mantine/core";
 import { DatePicker, DatePickerInput, DateTimePicker, DatesRangeValue, TimeInput } from "@mantine/dates";
 import '@mantine/dates/styles.css';
 import { useForm } from "@mantine/form";
@@ -46,76 +46,81 @@ export default function Home() {
 
   return (
     <Container size="sm" mt='md'>
-      <form>
-        <Flex justify="center" direction='column' align='center' gap='sm'>
-          <Title order={2}>Easily schedule events with <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
-          <TextInput
-            size='lg'
-            mt='md'
-            placeholder="Event Name"
-            w='50%'
-            {...form.getInputProps('title')}
-          />
-        </Flex>
-        <Grid mt='md' align="center">
-          <Grid.Col span={{ base: 12, md: 6 }}>
-            <Flex justify='center' direction='column' align='center'>
-              <Text c='dimmed' size="xs">Date of the event</Text>
-              <DatePicker
-                type='range'
-                value={value}
-                onChange={setValue}
-                allowSingleDateInRange
-              />
-            </Flex>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }}>
-            <Flex justify='center' direction='column' align='center'>
-              <Combobox
-                store={comboboxStartTime}
-                onOptionSubmit={(value) => form.setFieldValue('startTime', value)}
-              >
-                <Combobox.Target>
-                  <TimeInput
-                    description="Not early than"
-                    w='50%'
-                    rightSection={<Combobox.Chevron />}
-                    onClick={() => comboboxStartTime.toggleDropdown()}
-                    leftSection={<IconClock size={18} />}
-                    {...form.getInputProps('startTime')}
-                  />
-                </Combobox.Target>
-                <Combobox.Dropdown>
-                  <Combobox.Options>{timeOption}</Combobox.Options>
-                </Combobox.Dropdown>
-              </Combobox>
+      <Group justify="center">
+        <Title order={2}>Easily schedule events with <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
+      </Group>
+      <Paper shadow="xs" px='xl' pb='xl' mt='md'>
+        <form>
+          <Flex justify="center" direction='column' align='center' gap='sm'>
+            <TextInput
+              size='lg'
+              mt='md'
+              placeholder="Event Title"
+              w='50%'
+              {...form.getInputProps('title')}
+            />
+          </Flex>
+          <Grid mt='md' align="center">
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <Flex justify='center' direction='column' align='center'>
+                <Text c='dimmed' size="xs">Date of the event</Text>
+                <DatePicker
+                  type='range'
+                  value={value}
+                  onChange={setValue}
+                  allowSingleDateInRange
+                />
+              </Flex>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <Flex justify='center' direction='column' align='center'>
+                <Combobox
+                  store={comboboxStartTime}
+                  onOptionSubmit={(value) => form.setFieldValue('startTime', value)}
+                >
+                  <Combobox.Target>
+                    <TimeInput
+                      description="Not early than"
+                      w='50%'
+                      rightSection={<Combobox.Chevron />}
+                      onClick={() => comboboxStartTime.toggleDropdown()}
+                      leftSection={<IconClock size={18} />}
+                      {...form.getInputProps('startTime')}
+                    />
+                  </Combobox.Target>
+                  <Combobox.Dropdown>
+                    <Combobox.Options>{timeOption}</Combobox.Options>
+                  </Combobox.Dropdown>
+                </Combobox>
 
-              <Combobox
-                store={comboboxEndTime}
-                onOptionSubmit={(value) => form.setFieldValue('endTime', value)}
-              >
-                <Combobox.Target>
-                  <TimeInput
-                    description="Not later than"
-                    mt='md'
-                    w='50%'
-                    onClick={() => comboboxEndTime.toggleDropdown()}
-                    rightSection={<Combobox.Chevron />}
-                    leftSection={<IconClock size={18} />}
-                    {...form.getInputProps('endTime')}
-                  />
-                </Combobox.Target>
-                <Combobox.Dropdown>
-                  <Combobox.Options>{timeOption}</Combobox.Options>
-                </Combobox.Dropdown>
-              </Combobox>
+                <Combobox
+                  store={comboboxEndTime}
+                  onOptionSubmit={(value) => form.setFieldValue('endTime', value)}
+                >
+                  <Combobox.Target>
+                    <TimeInput
+                      description="Not later than"
+                      mt='md'
+                      w='50%'
+                      onClick={() => comboboxEndTime.toggleDropdown()}
+                      rightSection={<Combobox.Chevron />}
+                      leftSection={<IconClock size={18} />}
+                      {...form.getInputProps('endTime')}
+                    />
+                  </Combobox.Target>
+                  <Combobox.Dropdown>
+                    <Combobox.Options>{timeOption}</Combobox.Options>
+                  </Combobox.Dropdown>
+                </Combobox>
+                
+                
+              </Flex>
               
-              
-            </Flex>
-            
-          </Grid.Col>
-        </Grid>
-      </form>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Paper>
+      
     </Container>
   )
 }
