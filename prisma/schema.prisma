@@ -27,12 +27,14 @@ model jadwal {
 
 model slot {
   id String @id @default(nanoid())
-  epoch Int
+  epoch DateTime @db.Timestamp(6)
   participants_name_array Json
   jadwal_id String
 
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([jadwal_id])
 }
 
 model slot_participant {
