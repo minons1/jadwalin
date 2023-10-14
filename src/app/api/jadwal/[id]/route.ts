@@ -8,5 +8,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
   })
 
-  return Response.json({ jadwal })
+  const slots = await Prisma.slot.findMany({
+    where: {
+      jadwal_id: id
+    }
+  })
+
+  return Response.json({ jadwal: {
+    ...jadwal,
+    slots
+    }
+  })
 }
