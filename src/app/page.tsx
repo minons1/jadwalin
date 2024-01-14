@@ -1,11 +1,13 @@
 'use client'
-import { Button, Container, Flex, Grid, Group, Paper, Select, Text, TextInput, Title } from "@mantine/core";
-import { DatePicker, DatePickerInput, DatesRangeValue } from "@mantine/dates";
-import '@mantine/dates/styles.css';
-import { useForm } from "@mantine/form";
-import { IconClock } from "@tabler/icons-react";
-import { useState } from "react";
-import { timeOptions } from "../util/time";
+import { Button, Container, Flex, Grid, Group, Paper, Select, Text, TextInput, Title } from "@mantine/core"
+import { DatePicker, DatePickerInput, DatesRangeValue } from "@mantine/dates"
+import '@mantine/dates/styles.css'
+import { useForm } from "@mantine/form"
+import { IconClock } from "@tabler/icons-react"
+import { useState } from "react"
+import { timeOptions } from "../util/time"
+import { useRouter } from "next/navigation"
+import { DateTime } from "luxon"
 
 type Form = {
   title: string,
@@ -16,14 +18,19 @@ type Form = {
 }
 
 export default function Home() {
-  const [value, setValue] = useState<DatesRangeValue | undefined>([new Date(), new Date()]);
+  const router = useRouter()
+  const [isLoading, setLoading] = useState(false)
+  const [value, setValue] = useState<DatesRangeValue | undefined>([DateTime.now().toJSDate(), DateTime.now().toJSDate()])
   const form = useForm<Form>({
     initialValues: {
       title: '',
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: DateTime.now().set({ hour: 0, minute: 0, second: 0, millisecond: 0}).toJSDate(),
+      endDate: DateTime.now().set({ hour: 23, minute: 59, second: 59, millisecond: 0}).toJSDate(),
       startTime: '09:00',
       endTime: '17:00'
+    },
+    validate: {
+      title: (value) => value.trim().length === 0 ? 'Name the event': null,
     }
   })
 
@@ -31,34 +38,41 @@ export default function Home() {
     setValue(dates)
     if (dates[0]) {
       form.setFieldValue('startDate', dates[0])
-      form.setFieldValue('endDate', dates[0])
+      form.setFieldValue('endDate', DateTime.fromJSDate(dates[0]).set({ hour: 23, minute: 59, second: 59 }).toJSDate())
     }
 
     if (dates[1]) {
-      form.setFieldValue('endDate', dates[1])
+      form.setFieldValue('endDate', DateTime.fromJSDate(dates[1]).set({ hour: 23, minute: 59, second: 59 }).toJSDate())
     }
   }
 
   const handleSubmit = async (values: Form) => {
-    const [startTimeHour, startTimeMinute] = values.startTime.split(':')
-    const [endTimeHour, endTimeMinute] = values.endTime.split(':')
+    setLoading(true)
+    try {
+      const [startTimeHour, startTimeMinute] = values.startTime.split(':')
+      const [endTimeHour, endTimeMinute] = values.endTime.split(':')
 
-    const res = await fetch('/api/jadwal', {
-      body: JSON.stringify({
-        jadwal: {
-          title: values.title,
-          start_date: values.startDate,
-          end_date: values.endDate,
-          start_time: new Date(Date.UTC(1970, 0, 0, parseInt(startTimeHour), parseInt(startTimeMinute))),
-          end_time: new Date(Date.UTC(1970, 0, 0, parseInt(endTimeHour), parseInt(endTimeMinute)))
-        }
-      }),
-      method: 'POST'
-    })
+      const res = await fetch('/api/jadwal', {
+        body: JSON.stringify({
+          jadwal: {
+            title: values.title,
+            start_date: values.startDate,
+            end_date: values.endDate,
+            start_time: DateTime.utc(1970, 1, 1, parseInt(startTimeHour), parseInt(startTimeMinute)),
+            end_time: DateTime.utc(1970, 1, 1, parseInt(endTimeHour), parseInt(endTimeMinute))
+          }
+        }),
+        method: 'POST'
+      })
 
-    console.debug(await res.json())
+      const resBody = await res.json()
 
-    form.reset()
+      router.push(`/${resBody.jadwal.id}`)
+    } catch (error) {
+      // TODO: display notif
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -120,7 +134,7 @@ export default function Home() {
             </Grid.Col>
           </Grid>
           <Group mt='md' justify='center'>
-            <Button type="submit">
+            <Button type="submit" loading={isLoading}>
               Schedule
             </Button>
           </Group>
