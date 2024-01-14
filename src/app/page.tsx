@@ -7,6 +7,7 @@ import { IconClock } from "@tabler/icons-react"
 import { useState } from "react"
 import { timeOptions } from "../util/time"
 import { useRouter } from "next/navigation"
+import { DateTime } from "luxon"
 
 type Form = {
   title: string,
@@ -19,12 +20,12 @@ type Form = {
 export default function Home() {
   const router = useRouter()
   const [isLoading, setLoading] = useState(false)
-  const [value, setValue] = useState<DatesRangeValue | undefined>([new Date(), new Date()])
+  const [value, setValue] = useState<DatesRangeValue | undefined>([DateTime.now().toJSDate(), DateTime.now().toJSDate()])
   const form = useForm<Form>({
     initialValues: {
       title: '',
-      startDate: new Date(new Date().setHours(0,0,0,0)),
-      endDate: new Date(new Date().setHours(0,0,0,0)),
+      startDate: DateTime.now().set({ hour: 0, minute: 0, second: 0, millisecond: 0}).toJSDate(),
+      endDate: DateTime.now().set({ hour: 23, minute: 59, second: 59, millisecond: 0}).toJSDate(),
       startTime: '09:00',
       endTime: '17:00'
     },
@@ -37,11 +38,11 @@ export default function Home() {
     setValue(dates)
     if (dates[0]) {
       form.setFieldValue('startDate', dates[0])
-      form.setFieldValue('endDate', dates[0])
+      form.setFieldValue('endDate', DateTime.fromJSDate(dates[0]).set({ hour: 23, minute: 59, second: 59 }).toJSDate())
     }
 
     if (dates[1]) {
-      form.setFieldValue('endDate', dates[1])
+      form.setFieldValue('endDate', DateTime.fromJSDate(dates[1]).set({ hour: 23, minute: 59, second: 59 }).toJSDate())
     }
   }
 
@@ -57,8 +58,8 @@ export default function Home() {
             title: values.title,
             start_date: values.startDate,
             end_date: values.endDate,
-            start_time: new Date(Date.UTC(1970, 0, 1, parseInt(startTimeHour), parseInt(startTimeMinute))),
-            end_time: new Date(Date.UTC(1970, 0, 1, parseInt(endTimeHour), parseInt(endTimeMinute)))
+            start_time: DateTime.utc(1970, 1, 1, parseInt(startTimeHour), parseInt(startTimeMinute)),
+            end_time: DateTime.utc(1970, 1, 1, parseInt(endTimeHour), parseInt(endTimeMinute))
           }
         }),
         method: 'POST'
@@ -66,7 +67,6 @@ export default function Home() {
 
       const resBody = await res.json()
 
-      form.reset()
       router.push(`/${resBody.jadwal.id}`)
     } catch (error) {
       // TODO: display notif
