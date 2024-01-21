@@ -1,5 +1,5 @@
 'use client'
-import { Button, Checkbox, Container, Flex, Grid, PasswordInput, Table, Text, TextInput, Title } from '@mantine/core'
+import { Button, Checkbox, Code, Container, Flex, Grid, PasswordInput, Table, Text, TextInput, Title } from '@mantine/core'
 import { jadwal, participant, slot } from '@prisma/client'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { getDateInterval, getTimeInterval } from '../../util/time'
@@ -29,9 +29,11 @@ type ParticipantType = Pick<participant, 'id' | 'name'>
 
 export default function Jadwal({ params }: { params: { id: string } }) {
   const [jadwal, setJadwal] = useState<JadwalType | null>(null)
-  const [slotMap] = useState<Map<string, { id: string, participants: string[] }>>(new Map())
+  const [slotMap, setSlotMap] = useState<Record<string, { id: string, participants: string[] }>>({})
   const [isLoading, setLoading] = useState(false)
   const [participant, setParticipant] = useState<ParticipantType | null>(null)
+  const [participants, setParticipants] = useState<ParticipantType[]>([])
+  const [loadingCheckboxesSet, setLoadingCheckboxesSet] = useState<Record<string, boolean>>({})
 
   const form = useForm<ParticipantForm>({
     initialValues: {
@@ -73,14 +75,42 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     if (!participant) return
 
     const epoch = e.target.value
-    const slot = slotMap.get(epoch)
+    const slot = slotMap[epoch]
 
     if (!slot) return
+    setLoadingCheckboxesSet(prev => ({ ...prev, [epoch]: true }))
+
 
     if (e.target.checked) {
+      const res = await fetch('/api/jadwal/slot', {
+        method: 'POST',
+        body: JSON.stringify({
+          slot: {
+            slot_id: slot.id,
+            participant_id: participant.id
+          }
+        })
+      })
+
+      if (res.status <= 299) {
+        slot.participants.push(participant.id)
+      }
     } else {
+      const res = await fetch('/api/jadwal/slot', {
+        method: 'DELETE',
+        body: JSON.stringify({
+          slot: {
+            slot_id: slot.id,
+            participant_id: participant.id
+          }
+        })
+      })
+      if (res.status <= 299) {
+        slot.participants = slot.participants.filter(par => par !== participant.id)
+      }
     }
-    slotMap.set(epoch, slot)
+    setSlotMap(prev => ({ ...prev, [epoch]: slot }))
+    setLoadingCheckboxesSet(prev => ({ ...prev, [epoch]: false }))
   }
 
   useEffect(() => {
@@ -100,16 +130,19 @@ export default function Jadwal({ params }: { params: { id: string } }) {
       const resBody = await res.json() as { jadwal: JadwalType}
       setJadwal(resBody.jadwal)
 
+      console.log(resBody.jadwal)
+
       const participantRes = await fetch(`/api/jadwal/${params.id}/participants`)
       if (participantRes.status >= 400) return
 
       const participantResBody = await participantRes.json() as { participants: ParticipantType[] }
+      setParticipants(participantResBody.participants)
 
       for (const slot of resBody.jadwal.slots) {
-        slotMap.set(slot.epoch, {
+        slotMap[slot.epoch] = {
           id: slot.id,
-          participants: slot.participants.map(par => participantResBody.participants.find(p => p.id === par.participant_id)?.name || '')
-        })
+          participants: slot.participants.map(par => par.participant_id)
+        }
       }
     }
 
@@ -123,6 +156,10 @@ export default function Jadwal({ params }: { params: { id: string } }) {
         <>
           <Flex mt='md' justify='center' align='center' direction='column'>
             <Title>{jadwal.title}</Title>
+            {participant && <Text>Hello, {participant.name}, here&apos;s your availability</Text>}
+            {participants && <Text>
+              All participants: {participants.map(par => <Code color='teal.5' c='white' key={par.id}>{par.name}</Code>)}
+            </Text>}
           </Flex>
           <Grid mt='md' align='center'>
             <Grid.Col span={{ base: 12, md: 6 }}>
@@ -146,7 +183,9 @@ export default function Jadwal({ params }: { params: { id: string } }) {
                           return date && <Table.Td key={date.set({ hour: time.hour, minute: time.minute, second: time.second }).toUTC().toISO()}>
                               <Checkbox
                                 value={date.set({ hour: time.hour, minute: time.minute, second: time.second }).toUTC().toISO() as string}
+                                checked={slotMap[date.set({ hour: time.hour, minute: time.minute, second: time.second }).toUTC().toISO() as string]?.participants.includes(participant.id)}
                                 onChange={handleCheckboxChange}
+                                disabled={loadingCheckboxesSet[date.set({ hour: time.hour, minute: time.minute, second: time.second }).toUTC().toISO() as string]}
                               />
                             </Table.Td>
                         })}

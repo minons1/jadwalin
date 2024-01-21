@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { Container, Group, Burger, Text, Title } from '@mantine/core';
+import { Container, Group, Burger, Text, Title, Anchor } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './header.module.css';
 import { IconCalendar } from '@tabler/icons-react';
@@ -36,7 +36,11 @@ export default function Header() {
       <Container size="md" className={classes.inner}>
         <Group gap={5}>
           <IconCalendar size={28}/>
-          <Title order={2}><Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
+          <Anchor href='/' underline='never'>
+            <Title order={2}>
+              <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text>
+            </Title>
+          </Anchor>
         </Group>
 
         <Group gap={5} visibleFrom="xs">
