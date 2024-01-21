@@ -1,21 +1,18 @@
-"use client"
-import { Button, Checkbox, Container, Flex, Grid, PasswordInput, Table, Text, TextInput, Title } from "@mantine/core"
-import { jadwal, participant, slot } from "@prisma/client"
-import { useEffect, useState } from "react"
-import { getDateInterval, getTimeInterval } from "../../util/time"
-import { useForm } from "@mantine/form"
-import { notifications } from "@mantine/notifications"
+'use client'
+import { Button, Checkbox, Container, Flex, Grid, PasswordInput, Table, Text, TextInput, Title } from '@mantine/core'
+import { jadwal, participant, slot } from '@prisma/client'
+import { useEffect, useState } from 'react'
+import { getDateInterval, getTimeInterval } from '../../util/time'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 
-type JadwalType = Omit<
-  jadwal,
-  "start_date" | "end_date" | "start_time" | "end_time"
-> & {
+type JadwalType = Omit<jadwal, 'start_date' | 'end_date' | 'start_time' | 'end_time'> & {
   // notes: prisma return type is Date, but it actually string because api return it as string
   start_date: string
   end_date: string
   start_time: string
   end_time: string
-  slots: (Omit<slot, "epoch"> & {
+  slots: (Omit<slot, 'epoch'> & {
     epoch: string
     participants_name_array: string[]
   })[]
@@ -89,10 +86,10 @@ export default function Jadwal({ params }: { params: { id: string } }) {
   }, [])
 
   return (
-    <Container size="lg">
+    <Container size='lg'>
       {jadwal &&
         <>
-          <Flex mt='md' justify="center" align="center" direction="column">
+          <Flex mt='md' justify='center' align='center' direction='column'>
             <Title>{jadwal.title}</Title>
           </Flex>
           <Grid mt='md' align='center'>
@@ -105,7 +102,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
                       <Table.Th>Time / Date</Table.Th>
                       {getDateInterval(jadwal.start_date, jadwal.end_date, jadwal.timezone).map((date) => {
                         return date && <Table.Th key={date.toISO()}>
-                            {date.toFormat("ccc d MMM ")}
+                            {date.toFormat('ccc d MMM ')}
                           </Table.Th>
                       })}
                     </Table.Tr>
