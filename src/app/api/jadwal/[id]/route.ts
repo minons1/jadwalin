@@ -14,9 +14,22 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
   })
 
+  const slotsWithParticipants = await Promise.all(slots.map(async slot => {
+    return {
+      ...slot,
+      participants: await Prisma.slot_participant.findMany({
+        where: {
+          slot_id: slot.id
+        },
+        select: {
+          participant_id: true
+        }
+      })
+    }
+  }))
+
   return Response.json({ jadwal: {
     ...jadwal,
-    slots
-    }
-  })
+    slots: slotsWithParticipants
+  } })
 }

@@ -28,7 +28,6 @@ model jadwal {
 model slot {
   id String @id @default(nanoid())
   epoch DateTime @db.Timestamp(6)
-  participants_name_array Json
   jadwal_id String
 
   created_at DateTime @default(now()) @db.Timestamp(6)

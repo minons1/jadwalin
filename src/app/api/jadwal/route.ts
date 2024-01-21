@@ -42,8 +42,7 @@ export async function POST(req: Request) {
     timeInterval.forEach(time => {
       slots.push({
         jadwal_id: result.id,
-        epoch: DateTime.fromObject({ year: date.year, month: date.month, day: date.day, hour: time.hour, minute: time.minute }).toISO() as string,
-        participants_name_array: []
+        epoch: DateTime.fromObject({ year: date.year, month: date.month, day: date.day, hour: time.hour, minute: time.minute }).toISO() as string
       })
     })
   })
