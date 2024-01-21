@@ -53,6 +53,7 @@ export default function Home() {
       const [endTimeHour, endTimeMinute] = values.endTime.split(':')
 
       const res = await fetch('/api/jadwal', {
+        method: 'POST',
         body: JSON.stringify({
           jadwal: {
             title: values.title,
@@ -61,16 +62,13 @@ export default function Home() {
             start_time: DateTime.utc(1970, 1, 1, parseInt(startTimeHour), parseInt(startTimeMinute)),
             end_time: DateTime.utc(1970, 1, 1, parseInt(endTimeHour), parseInt(endTimeMinute))
           }
-        }),
-        method: 'POST'
+        })
       })
 
       const resBody = await res.json()
 
       router.push(`/${resBody.jadwal.id}`)
-    } catch (error) {
-      // TODO: display notif
-    } finally {
+    } catch (error) { } finally {
       setLoading(false)
     }
   }
