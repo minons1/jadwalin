@@ -6,50 +6,58 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model jadwal {
-  id String @id
-  title String
+  id          String   @id
+  title       String
   description String?
-  start_date DateTime @db.Timestamp(6)
-  end_date DateTime @db.Timestamp(6)
+  start_date  DateTime @db.Timestamp(3)
+  end_date    DateTime @db.Timestamp(3)
 
   start_time DateTime @db.Time(3)
-  end_time DateTime @db.Time(3)
-  timezone String
+  end_time   DateTime @db.Time(3)
+  timezone   String
 
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
+  created_at  DateTime      @default(now()) @db.Timestamp(3)
+  updated_at  DateTime      @updatedAt @db.Timestamp(3)
+
+  slot        slot[]
+  participant participant[]
 }
 
 model slot {
-  id String @id @default(nanoid())
-  epoch DateTime @db.Timestamp(6)
+  id        String   @id @default(nanoid())
+  epoch     DateTime @db.Timestamp(3)
   jadwal_id String
+  jadwal    jadwal   @relation(fields: [jadwal_id], references: [id])
 
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-
-  @@index([jadwal_id])
+  created_at       DateTime           @default(now()) @db.Timestamp(3)
+  updated_at       DateTime           @updatedAt @db.Timestamp(3)
+  slot_participant slot_participant[]
 }
 
 model slot_participant {
   slot_id String
+  slot    slot   @relation(fields: [slot_id], references: [id])
+
   participant_id String
+  participant    participant @relation(fields: [participant_id], references: [id])
 
   @@id([slot_id, participant_id])
 }
 
 model participant {
-  id String @id @default(nanoid())
-  name String
+  id       String  @id @default(nanoid())
+  name     String
   password String?
 
   jadwal_id String
+  jadwal    jadwal @relation(fields: [jadwal_id], references: [id])
 
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
+  created_at       DateTime           @default(now()) @db.Timestamp(3)
+  updated_at       DateTime           @updatedAt @db.Timestamp(3)
+  slot_participant slot_participant[]
 }
