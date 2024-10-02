@@ -122,7 +122,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
       if (res.status >= 400) {
         notifications.show({
           title: 'Error',
-          message: 'Jadwal not found',
+          message: 'Jadwal not found!',
           color: 'red'
         })
         return
