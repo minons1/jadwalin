@@ -1,4 +1,5 @@
-'server-only'
+'use client'
+
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
@@ -9,10 +10,10 @@ import type { Metadata } from 'next'
 import Header from '../components/header'
 import { Notifications } from '@mantine/notifications';
 
-export const metadata: Metadata = {
-  title: 'Jadwal.in',
-  description: 'Decide your team schedule easily with Jadwal.in'
-}
+// export const metadata: Metadata = {
+//   title: 'Jadwal.in',
+//   description: 'Decide your team schedule easily with Jadwal.in'
+// }
 
 
 export default function RootLayout({

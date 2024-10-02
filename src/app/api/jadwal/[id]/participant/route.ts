@@ -1,7 +1,7 @@
 export const runtime = "edge"
 
 import { Prisma } from "../../../../../lib/prisma"
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 type CreateParticipantBody = {
   participant: {

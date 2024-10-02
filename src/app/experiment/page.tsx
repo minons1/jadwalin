@@ -1,6 +1,6 @@
 'use client'
 
-import { Checkbox, CheckboxGroup, Text } from '@mantine/core'
+import { Checkbox, Text } from '@mantine/core'
 import { useState } from 'react'
 
 export default function Experiment() {
