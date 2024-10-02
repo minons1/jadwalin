@@ -2,7 +2,6 @@ export const runtime = "edge"
 
 import { Prisma as PrismaType } from "@prisma/client"
 import { Prisma } from "../../../lib/prisma"
-import { ulid } from "ulid"
 import { nanoid } from "nanoid"
 import { NextRequest } from "next/server"
 import haha from "../../../lib/jokes"
