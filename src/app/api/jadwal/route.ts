@@ -3,6 +3,7 @@ export const runtime = "edge"
 import { Prisma as PrismaType } from "@prisma/client"
 import { Prisma } from "../../../lib/prisma"
 import { ulid } from "ulid"
+import { nanoid } from "nanoid"
 import { NextRequest } from "next/server"
 import haha from "../../../lib/jokes"
 import { DateTime } from "luxon"
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   const timezone = 'Asia/Jakarta'
   const result = await Prisma.jadwal.create({
     data: {
-      id: ulid().toLowerCase(),
+      id: nanoid(),
       title: body.jadwal.title,
       start_date: body.jadwal.start_date,
       end_date: body.jadwal.end_date,
