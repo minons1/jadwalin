@@ -21,7 +21,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   })
 
   if (!jadwal) {
-    return Response.json({ message: 'Jadwal not found' }, { status: 404 })
+    return Response.json({ message: 'Oh no! Jadwal not found' }, { status: 404 })
   }
 
   let participant = await Prisma.participant.findFirst({
