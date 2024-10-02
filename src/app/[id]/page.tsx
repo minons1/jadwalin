@@ -1,7 +1,7 @@
 'use client'
-import { Button, Checkbox, Code, Container, Flex, Grid, PasswordInput, Table, Text, TextInput, Title } from '@mantine/core'
+import { Button, Checkbox, Code, Container, Flex, Grid, PasswordInput, Pill, Table, Text, TextInput, Title, Tooltip } from '@mantine/core'
 import { jadwal, participant, slot } from '@prisma/client'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { getDateInterval, getTimeInterval } from '../../util/time'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
@@ -66,6 +66,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
       }
 
       setParticipant(resBody.participant)
+      setParticipants(prev => [...prev, { id: resBody.participant.id, name: resBody.participant.name }])
     } catch (err) { } finally {
       setLoading(false)
     }
@@ -130,8 +131,6 @@ export default function Jadwal({ params }: { params: { id: string } }) {
       const resBody = await res.json() as { jadwal: JadwalType}
       setJadwal(resBody.jadwal)
 
-      console.log(resBody.jadwal)
-
       const participantRes = await fetch(`/api/jadwal/${params.id}/participants`)
       if (participantRes.status >= 400) return
 
@@ -144,6 +143,8 @@ export default function Jadwal({ params }: { params: { id: string } }) {
           participants: slot.participants.map(par => par.participant_id)
         }
       }
+
+      setSlotMap(prev => ({ ...prev, ...slotMap }))
     }
 
     fetchJadwal()
@@ -151,7 +152,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
   }, [])
 
   return (
-    <Container size='lg'>
+    <Container size='xl'>
       {jadwal &&
         <>
           <Flex mt='md' justify='center' align='center' direction='column'>
@@ -221,7 +222,39 @@ export default function Jadwal({ params }: { params: { id: string } }) {
             </>}
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6 }}>
-              This will show current participant
+              <Table withColumnBorders>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>↓ Time / Date →</Table.Th>
+                    {getDateInterval(jadwal.start_date, jadwal.end_date, jadwal.timezone).map((date) => {
+                      return date && <Table.Th key={date.toISO()}>
+                          {date.toFormat('ccc d MMM')}
+                        </Table.Th>
+                    })}
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {getTimeInterval(jadwal.start_time, jadwal.end_time).map((time) => {
+                      return time && <Table.Tr key={time.toISO()}>
+                        <Table.Td>{time.toString().slice(-13, -8)}</Table.Td>
+                        {getDateInterval(jadwal.start_date, jadwal.end_date, jadwal.timezone).map((date) => {
+                          const epoch = date.set({ hour: time.hour, minute: time.minute, second: time.second }).toUTC().toISO() as string
+                          const participantsEpoch = slotMap[epoch]?.participants || []
+                          const participantCounts = participantsEpoch.length
+                          const opacity = participantCounts / participants.length
+                          return date && participantCounts > 0 ?
+                            <Tooltip label={participantsEpoch.map(par => participants.find(p => p.id === par)?.name).join(', ')}>
+                              <TableDataComponent epoch={epoch} opacity={opacity} />
+                            </Tooltip> :
+                            <TableDataComponent epoch={epoch} opacity={opacity} />
+                        })}
+                      </Table.Tr>
+                    }
+                  )}
+                </Table.Tbody>
+                <Table.Caption>Darker color show higher availability</Table.Caption>
+              </Table>
+              {/* {JSON.stringify(slotMap)} */}
             </Grid.Col>
           </Grid>
         </>
@@ -229,3 +262,18 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     </Container>
   )
 }
+
+const TableDataComponent = forwardRef<HTMLTableCellElement, { epoch: string, opacity: number}>(({ epoch, opacity }, ref) => (
+  <Table.Td
+      key={epoch}
+      align='center'
+      ref={ref}
+    >
+      <Pill
+        size='sm'
+        bg={`rgba(59, 223, 112, ${opacity})`}
+      >&nbsp;&nbsp;&nbsp;</Pill>
+    </Table.Td>
+))
+
+TableDataComponent.displayName = 'TableDataComponent'

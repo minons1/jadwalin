@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
   const timeInterval = getTimeInterval(body.jadwal.start_time, body.jadwal.end_time)
 
-  let slots: PrismaType.slotCreateInput[] = []
+  let slots: PrismaType.slotCreateManyInput[] = []
 
   dateInterval.forEach(date => {
     timeInterval.forEach(time => {

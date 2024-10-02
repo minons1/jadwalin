@@ -4,7 +4,7 @@ import { DatePicker, DatePickerInput, DatesRangeValue } from "@mantine/dates"
 import '@mantine/dates/styles.css'
 import { useForm } from "@mantine/form"
 import { IconClock } from "@tabler/icons-react"
-import { useState } from "react"
+import { useReducer, useState } from "react"
 import { timeOptions } from "../util/time"
 import { useRouter } from "next/navigation"
 import { DateTime } from "luxon"
@@ -17,10 +17,25 @@ type Form = {
   endTime: string
 }
 
+type DateRangeAction = {
+  type: 'update',
+  payload: DatesRangeValue
+}
+
+function dateRangeReducer(state: DatesRangeValue, action: DateRangeAction) {
+  switch (action.type) {
+    case 'update':
+      return action.payload
+    default:
+      throw new Error('Unhandled action')
+  }
+}
+
 export default function Home() {
   const router = useRouter()
   const [isLoading, setLoading] = useState(false)
-  const [value, setValue] = useState<DatesRangeValue | undefined>([DateTime.now().toJSDate(), DateTime.now().toJSDate()])
+  const [dateRange, dateRangeDispatch] = useReducer(dateRangeReducer, [DateTime.now().toJSDate(), DateTime.now().toJSDate()])
+  // const [value, setValue] = useState<DatesRangeValue | undefined>([DateTime.now().toJSDate(), DateTime.now().toJSDate()])
   const form = useForm<Form>({
     initialValues: {
       title: '',
@@ -35,7 +50,8 @@ export default function Home() {
   })
 
   const onDateChange = (dates: DatesRangeValue) => {
-    setValue(dates)
+    dateRangeDispatch({ type: 'update', payload: dates })
+    // setValue(dates)
     if (dates[0]) {
       form.setFieldValue('startDate', dates[0])
       form.setFieldValue('endDate', DateTime.fromJSDate(dates[0]).set({ hour: 23, minute: 59, second: 59 }).toJSDate())
@@ -96,12 +112,12 @@ export default function Home() {
                 <DatePickerInput
                   type="range"
                   disabled
-                  value={value}
+                  value={dateRange}
                 />
                 <DatePicker
                   mt='xs'
                   type='range'
-                  value={value}
+                  value={dateRange}
                   onChange={onDateChange}
                   allowSingleDateInRange
                 />

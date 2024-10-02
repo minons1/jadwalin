@@ -5,8 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "checkDiff": "yarn prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --script",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:worker": "cloudflare",
+    "dev:worker": "wrangler dev --port 8771",
+    "preview:worker": "yarn build:worker && yarn dev:worker",
+    "deploy:worker": "yarn build:worker && wrangler deploy"
   },
   "dependencies": {
     "@mantine/core": "^7.4.2",
@@ -26,6 +31,7 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^0.0.0-3628be6",
     "@types/bcrypt": "^5.0.2",
     "@types/luxon": "^3.4.0",
     "@types/node": "latest",
@@ -36,6 +42,7 @@
     "postcss": "^8.4.31",
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "latest"
+    "typescript": "latest",
+    "wrangler": "^3.79.0"
   }
 }
