@@ -1,9 +1,4 @@
-main = ".worker-next/index.mjs"
-name = "jadwalin"
-compatibility_date = "2024-09-23"
+name = "my-app"
+compatibility_date = "2024-07-29"
 compatibility_flags = ["nodejs_compat"]
-experimental_assets = { directory = ".worker-next/assets", binding = "ASSETS" }
-
-[[kv_namespaces]]
-binding = "NEXT_CACHE_WORKERS_KV"
-id = "5f4efea166ae422abf16ed70a52348d6"
+pages_build_output_dir = ".vercel/output/static"

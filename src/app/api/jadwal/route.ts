@@ -1,3 +1,5 @@
+export const runtime = "edge"
+
 import { Prisma as PrismaType } from "@prisma/client"
 import { Prisma } from "../../../lib/prisma"
 import { ulid } from "ulid"

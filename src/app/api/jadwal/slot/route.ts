@@ -1,3 +1,5 @@
+export const runtime = "edge"
+
 import { Prisma } from '../../../../lib/prisma'
 
 type Body = {
