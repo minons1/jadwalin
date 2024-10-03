@@ -26,6 +26,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
+      
+      - name: Get Version
+        id: package
+        run: |
+          VERSION=$(${{ env.VERSION_SCRIPT }})
+          echo "version=$VERSION"
     
       - name: Install & Build
         run: |
@@ -65,7 +71,7 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: Deploy jadwalin ${{ env.VERSION_SCRIPT }} Success
+          message: ✅ Deploy jadwalin ${{ steps.package.outputs.version }} Success
       
       - name: Notify Telegram, Failed
         if: ${{ failure() }}
@@ -73,4 +79,4 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: Deploy jadwalin ${{ env.VERSION_SCRIPT }} Failed
+          message: 🔥 Deploy jadwalin ${{ steps.package.outputs.version }} Failed
