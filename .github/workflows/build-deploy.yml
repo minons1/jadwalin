@@ -37,8 +37,8 @@ jobs:
         run: |
           yarn install
           yarn build
-      - name: Generate Prisma Client
-        run: yarn prisma generate
+      # - name: Generate Prisma Client
+      #   run: yarn prisma generate
 
       - name: Compress Build
         run: tar -czf build.tar.gz node_modules .next
@@ -63,7 +63,7 @@ jobs:
             rm -rf node_modules .next
             tar -xzf build.tar.gz
             git pull --all
-            bash -ic "pm2 restart ecosystem.config.js"
+            bash -ic "yarn prisma generate && pm2 restart ecosystem.config.js"
 
       - name: Notify Telegram, Success
         if: ${{ failure() == false }}
