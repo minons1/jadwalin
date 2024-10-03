@@ -5,8 +5,6 @@ on:
       - main
 
 env:
-  APP_NAME: meeting.ai-sandbox.webapp
-  APP_DIR: /home/ubuntu/repos/meeting.ai-sandbox.webapp
   WORKDIR: ./
   NODE_VERSION: 20
   VERSION_SCRIPT: node -p "require('./package.json').version"
@@ -31,14 +29,13 @@ jobs:
         id: package
         run: |
           VERSION=$(${{ env.VERSION_SCRIPT }})
-          echo "version=$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
     
       - name: Install & Build
         run: |
           yarn install
           yarn build
-      # - name: Generate Prisma Client
-      #   run: yarn prisma generate
 
       - name: Compress Build
         run: tar -czf build.tar.gz node_modules .next
