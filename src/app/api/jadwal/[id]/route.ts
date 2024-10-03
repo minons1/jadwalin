@@ -1,5 +1,3 @@
-export const runtime = "edge"
-
 import { Prisma } from "../../../../lib/prisma"
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {

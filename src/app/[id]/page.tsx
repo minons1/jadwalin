@@ -1,8 +1,5 @@
 'use client'
 
-export const runtime = "edge"
-
-
 import { Button, Checkbox, Code, Container, Flex, Grid, PasswordInput, Pill, Table, Text, TextInput, Title, Tooltip } from '@mantine/core'
 import { jadwal, participant, slot } from '@prisma/client'
 import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
