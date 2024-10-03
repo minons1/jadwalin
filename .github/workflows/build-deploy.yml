@@ -26,12 +26,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
-      - name: Generate Prisma Client
-        run: yarn prisma generate
+    
       - name: Install & Build
         run: |
           yarn install
           yarn build
+      - name: Generate Prisma Client
+        run: yarn prisma generate
+
       - name: Compress Build
         run: tar -czf build.tar.gz node_modules .next
 
