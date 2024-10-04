@@ -59,16 +59,25 @@ export default function Jadwal({ params }: { params: { id: string } }) {
       const resBody = await res.json()
 
       if (res.status >= 400) {
-        notifications.show({
-          title: 'Error',
-          message: resBody.message,
-          color: 'red'
-        })
+        throw new Error(resBody.message)
       }
 
       setParticipant(resBody.participant)
-      setParticipants(prev => [...prev, { id: resBody.participant.id, name: resBody.participant.name }])
-    } catch (err) { } finally {
+      setParticipants(prev => {
+        const exists = prev.find(p => p.id === resBody.participant.id)
+        if (exists) return prev
+
+        return [...prev, { id: resBody.participant.id, name: resBody.participant.name }]
+      })
+    } catch (err) {
+      if (err instanceof Error) {
+        notifications.show({
+          title: 'Error',
+          message: err.message,
+          color: 'red'
+        })
+      }
+    } finally {
       setLoading(false)
     }
   }
@@ -149,6 +158,8 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     }
 
     fetchJadwal()
+      .then(() => { })
+      .catch(err => console.error(err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
