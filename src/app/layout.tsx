@@ -8,6 +8,7 @@ import '@mantine/notifications/styles.css';
 import { MantineProvider } from '@mantine/core'
 import type { Metadata } from 'next'
 import Main from '../components/main';
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'Jadwal.in',
@@ -33,6 +34,7 @@ export default function RootLayout({
             {children}
           </Main>
         </MantineProvider>
+        <Script src="https://autoback.link/autobacklink.js?ref=jadwalin.ngodingrandom.my.id" defer async />
       </body>
     </html>
   )

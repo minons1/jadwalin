@@ -9,7 +9,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       header={{ height: 56 }}
-      footer={{ height: 100 }}
+      footer={{ height: 160 }}
     >
       <AppShell.Header>
         <Header />
