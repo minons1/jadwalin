@@ -1,12 +1,22 @@
+import { NextRequest } from 'next/server'
 import { Prisma } from "../../../../lib/prisma"
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const searchParams = req.nextUrl.searchParams
+  const simple = searchParams.get('simple') === 'true'
+
   const { id } = params
   const jadwal = await Prisma.jadwal.findFirst({
     where: {
       id
     }
   })
+
+  if (simple) {
+    return Response.json({
+      jadwal
+    })
+  }
 
   const slots = await Prisma.slot.findMany({
     where: {
@@ -28,8 +38,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
   }))
 
-  return Response.json({ jadwal: {
-    ...jadwal,
-    slots: slotsWithParticipants
-  } })
+  return Response.json({
+    jadwal: {
+      ...jadwal,
+      slots: slotsWithParticipants
+    }
+  })
 }

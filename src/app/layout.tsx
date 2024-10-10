@@ -24,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel='icon' href='/favicon.ico' type='image/x-icon' sizes='16x16'></link>
       </head>
       <body>
         <MantineProvider theme={{

@@ -6,6 +6,8 @@ import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
 import { getDateInterval, getTimeInterval } from '../../util/time'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
+import { IconCopy, IconShare3 } from '@tabler/icons-react'
+import { DateTime } from 'luxon'
 
 type JadwalType = Omit<jadwal, 'start_date' | 'end_date' | 'start_time' | 'end_time'> & {
   // notes: prisma return type is Date, but it actually string because api return it as string
@@ -124,6 +126,24 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     setLoadingCheckboxesSet(prev => ({ ...prev, [epoch]: false }))
   }
 
+  const handleClickShareButton = async () => {
+    if (!jadwal) {
+      return
+    }
+
+    navigator.clipboard.writeText(`📅  "${jadwal.title}"
+${DateTime.fromISO(jadwal.start_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')} - ${DateTime.fromISO(jadwal.end_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')}
+Help us find the best time! Share your availability via Jadwalin
+${process.env.BASE_URL}/${jadwal.id}`)
+
+    notifications.show({
+      title: 'Copied',
+      message: 'Share this to your teammates',
+      color: 'teal',
+      icon: <IconCopy size={16} />
+    })
+  }
+
   useEffect(() => {
     if (!params.id) return
 
@@ -159,7 +179,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
 
     fetchJadwal()
       .then(() => { })
-      .catch(err => console.error(err))
+      .catch(console.error)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -173,8 +193,9 @@ export default function Jadwal({ params }: { params: { id: string } }) {
             {participants && <Text>
               All participants: {participants.map(par => <Code color='teal.5' c='white' key={par.id}>{par.name}</Code>)}
             </Text>}
+            <Button mt='sm' size='compact-sm' variant='subtle' onClick={handleClickShareButton}><IconShare3 size={14}/>&nbsp;Share</Button>
           </Flex>
-          <Grid mt='md' align='center'>
+          <Grid mt='md' align='flex-start'>
             <Grid.Col span={{ base: 12, md: 6 }}>
             {participant ? <>
               <Table striped>

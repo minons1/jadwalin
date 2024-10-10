@@ -40,7 +40,7 @@ export default function Header() {
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
         <Group gap={5}>
-          <IconCalendar size={28}/>
+          <IconCalendar size={28} color="var(--mantine-color-teal-filled)"/>
           <Anchor
             href='/'
             underline='never'
