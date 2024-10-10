@@ -92,7 +92,7 @@ export default function Home() {
   return (
     <Container size="sm" mt='md'>
       <Group justify="center">
-        <Title order={2}>Easily schedule your events with <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
+        <Title order={2}>Find the perfect time every time with <Text span inherit variant='gradient' gradient={{ from: 'green', to: 'teal', deg: 90 }}>Jadwal.in</Text></Title>
       </Group>
       <Paper shadow="xs" px='xl' pb='xl' mt='md'>
         <form onSubmit={form.onSubmit(handleSubmit)}>

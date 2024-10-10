@@ -189,7 +189,7 @@ ${process.env.BASE_URL}/${jadwal.id}`)
         <>
           <Flex mt='md' justify='center' align='center' direction='column'>
             <Title>{jadwal.title}</Title>
-            {participant && <Text>Hello, {participant.name}, here&apos;s your availability</Text>}
+            {participant && <Text>Hello, {participant.name}, here&apos;s the availability</Text>}
             {participants && <Text>
               All participants: {participants.map(par => <Code color='teal.5' c='white' key={par.id}>{par.name}</Code>)}
             </Text>}
