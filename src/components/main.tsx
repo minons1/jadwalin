@@ -18,9 +18,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
         <Notifications />
         {children}
       </AppShell.Main>
-      <AppShell.Footer>
-        <Footer />
-      </AppShell.Footer>
+      <Footer />
     </AppShell>
   )
 }
