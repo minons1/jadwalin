@@ -134,7 +134,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     navigator.clipboard.writeText(`📅  "${jadwal.title}"
 ${DateTime.fromISO(jadwal.start_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')} - ${DateTime.fromISO(jadwal.end_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')}
 Help us find the best time! Share your availability via Jadwalin
-${process.env.BASE_URL}/${jadwal.id}`)
+${process.env.NEXT_PUBLIC_BASE_URL}/${jadwal.id}`)
 
     notifications.show({
       title: 'Copied',
@@ -193,7 +193,7 @@ ${process.env.BASE_URL}/${jadwal.id}`)
             {participants && <Text>
               All participants: {participants.map(par => <Code color='teal.5' c='white' key={par.id}>{par.name}</Code>)}
             </Text>}
-            <Button mt='sm' size='compact-sm' variant='subtle' onClick={handleClickShareButton}><IconShare3 size={14}/>&nbsp;Share</Button>
+            <Button mt='sm' size='compact-sm' variant='outline' onClick={handleClickShareButton}><IconShare3 size={14}/>&nbsp;Share</Button>
           </Flex>
           <Grid mt='md' align='flex-start'>
             <Grid.Col span={{ base: 12, md: 6 }}>
