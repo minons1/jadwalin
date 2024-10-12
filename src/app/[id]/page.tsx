@@ -8,6 +8,7 @@ import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { IconCopy, IconShare3 } from '@tabler/icons-react'
 import { DateTime } from 'luxon'
+import { getBaseUrl } from './action'
 
 type JadwalType = Omit<jadwal, 'start_date' | 'end_date' | 'start_time' | 'end_time'> & {
   // notes: prisma return type is Date, but it actually string because api return it as string
@@ -134,7 +135,7 @@ export default function Jadwal({ params }: { params: { id: string } }) {
     navigator.clipboard.writeText(`📅  "${jadwal.title}"
 ${DateTime.fromISO(jadwal.start_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')} - ${DateTime.fromISO(jadwal.end_date, { zone: jadwal.timezone }).toFormat('LLLL d yyyy')}
 Help us find the best time! Share your availability via Jadwalin
-${process.env.NEXT_PUBLIC_BASE_URL}/${jadwal.id}`)
+${await getBaseUrl()}/${jadwal.id}`)
 
     notifications.show({
       title: 'Copied',
